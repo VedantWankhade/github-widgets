@@ -9,11 +9,11 @@ import (
 )
 
 func main() {
-	app := config.InitApp()
+	app := config.GetApp()
 	app.Info("App initialized")
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("GET /hello", handlers.GenericHandler)
+	mux.HandleFunc("GET /", handlers.GenericHandler)
 
 	server := http.Server{
 		Addr:     ":" + app.Port,

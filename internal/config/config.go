@@ -14,33 +14,32 @@ type app struct {
 	infoLogger *log.Logger
 }
 
-var a *app = &app{
-	errLogger:  log.New(os.Stderr, "[ERROR]", log.Flags()),
-	warnLogger: log.New(os.Stdout, "[WARN]", log.Flags()),
-	infoLogger: log.New(os.Stdout, "[INFO]", log.Flags()),
-}
+var a *app
 
-func InitApp() *app {
-	var err error
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "80"
-	}
-	var logWriter io.Writer
-	logFile := os.Getenv("LOG_FILE")
-	if logFile == "" {
-		a.Warn("LOG_FILE not passed. Falling back to STDOUT")
-		logWriter = os.Stdout
-	} else {
-		logWriter, err = os.OpenFile(logFile, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
-		if err != nil {
-			a.Fatal(fmt.Sprintf("Error opening file %s: %v\n", logFile, err))
+func GetApp() *app {
+	if a == nil {
+		var err error
+		port := os.Getenv("PORT")
+		if port == "" {
+			port = "80"
+		}
+		var logWriter io.Writer
+		logFile := os.Getenv("LOG_FILE")
+		if logFile == "" {
+			logWriter = os.Stdout
+		} else {
+			logWriter, err = os.OpenFile(logFile, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
+		a = &app{
+			Port:       port,
+			infoLogger: log.New(logWriter, "[INFO]", log.Flags()),
+			warnLogger: log.New(logWriter, "[WARN]", log.Flags()),
+			errLogger:  log.New(logWriter, "[ERROR]", log.Flags()),
 		}
 	}
-	a.errLogger.SetOutput(logWriter)
-	a.infoLogger.SetOutput(logWriter)
-	a.warnLogger.SetOutput(logWriter)
-	a.Port = port
 	return a
 }
 
