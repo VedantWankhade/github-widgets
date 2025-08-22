@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/vedantwankhade/gh-readme-cards/internal/services"
+	"github.com/vedantwankhade/github-widgets/internal/services"
 )
 
 func GenericHandler(w http.ResponseWriter, r *http.Request) {

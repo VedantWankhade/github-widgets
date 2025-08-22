@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/vedantwankhade/gh-readme-cards/internal/config"
+	"github.com/vedantwankhade/github-widgets/internal/config"
 )
 
 var app = config.GetApp()

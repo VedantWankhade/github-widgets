@@ -1,3 +1,3 @@
-module github.com/vedantwankhade/gh-readme-cards
+module github.com/vedantwankhade/github-widgets
 
 go 1.24.6

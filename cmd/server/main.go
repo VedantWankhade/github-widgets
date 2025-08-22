@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/vedantwankhade/gh-readme-cards/internal/config"
-	"github.com/vedantwankhade/gh-readme-cards/internal/handlers"
+	"github.com/vedantwankhade/github-widgets/internal/config"
+	"github.com/vedantwankhade/github-widgets/internal/handlers"
 )
 
 func main() {
