@@ -13,7 +13,7 @@ func main() {
 	app.Info("App initialized")
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("GET /", handlers.GenericHandler)
+	mux.HandleFunc("GET /get", handlers.GenericHandler)
 
 	server := http.Server{
 		Addr:     ":" + app.Port,
