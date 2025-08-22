@@ -1,2 +1,2 @@
-# gh-readme-cards
-Fancy cards for your GitHub readmes.
+# GitHub Widgets
+Useful (or just fun) widgets for your GitHub readmes.
