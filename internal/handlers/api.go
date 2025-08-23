@@ -26,6 +26,8 @@ func GenericHandler(w http.ResponseWriter, r *http.Request) {
 	switch widgetName {
 	case "health":
 		f, err = widgets.Health(params)
+	case "commitgraph":
+		f, err = widgets.CommitGraph(params)
 	default:
 		app.Error("invalid widget name")
 		f, err = nil, fmt.Errorf("invalid widget name")
