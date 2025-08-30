@@ -34,8 +34,8 @@ func Health(params url.Values) (io.ReadSeeker, error) {
 	app.Info(msg)
 
 	svg := fmt.Sprintf(`
-	<svg xmlns="http://www.w3.org/2000/svg" width="110" height="20" role="img" aria-label="build: passing">
-	  <title>build: passing</title>
+	<svg xmlns="http://www.w3.org/2000/svg" width="110" height="20" role="img" aria-label="health">
+	  <title>health</title>
 	  <rect width="50" height="20" fill="#555"/>   <!-- Left (label background) -->
 	  <rect x="50" width="60" height="20" fill="#4c1"/> <!-- Right (status background) -->
 	  
