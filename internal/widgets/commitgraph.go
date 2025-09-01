@@ -59,22 +59,50 @@ func CommitGraph(params url.Values) (io.ReadSeeker, error) {
 	return res, nil
 }
 
+func perRepoCommitsWorker(user, token string, jobId int, repoName <-chan string, res chan<- []int) {
+	app := config.GetApp()
+
+	for j := range repoName {
+		app.Info(fmt.Sprintf("worker %d started for repo %s", jobId, j))
+		time.Sleep(2 * time.Second)
+		app.Info(fmt.Sprintf("worker %d ended for repo %s", jobId, j))
+		resRet := []int{1, 2, 3}
+		res <- resRet
+	}
+}
+
 func getWeeklyCommits(user string, token string) [52]int {
 	app := config.GetApp()
 	var repos []GHUserRepo
 	var totalWeeklyCommits [52]int
-	start := time.Now()
+
 	utils.GetGHUserRepos[GHUserRepo](user, token, &repos)
-	app.Info(fmt.Sprintf("[Collecting repos took %dms]", time.Since(start).Milliseconds()))
+
+	// fire workers
+	numWorkers := len(repos)
+	app.Info(fmt.Sprintf("Firing off %d workers for %d repos", numWorkers, len(repos)))
+
+	repoName := make(chan string, len(repos))
+	res := make(chan []int, len(repos))
+
+	for w := range numWorkers {
+		go perRepoCommitsWorker(user, token, w, repoName, res)
+	}
+
+	// send to workers
 	for _, r := range repos {
-		start := time.Now()
-		weeklyCommits := utils.GetWeeklyCommitCount(r.RepoName, token)
-		app.Info(fmt.Sprintf("[Getting commits for %s took %dms]", r.RepoName, time.Since(start).Milliseconds()))
-		start = time.Now()
+		repoName <- r.RepoName
+	}
+
+	close(repoName)
+
+	// collect
+	for range repos {
+		weeklyCommits := <-res
+		app.Info(fmt.Sprintf("GOT: %v", weeklyCommits))
 		for i := 0; i < len(weeklyCommits) && i < 52; i++ {
 			totalWeeklyCommits[i] += weeklyCommits[i]
 		}
-		app.Info(fmt.Sprintf("[Adding weekly data took %dms]", time.Since(start).Milliseconds()))
 	}
 
 	return totalWeeklyCommits
