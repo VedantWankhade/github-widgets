@@ -64,10 +64,9 @@ func perRepoCommitsWorker(user, token string, jobId int, repoName <-chan string,
 
 	for j := range repoName {
 		app.Info(fmt.Sprintf("worker %d started for repo %s", jobId, j))
-		time.Sleep(2 * time.Second)
+		weeklyCommits := utils.GetWeeklyCommitCount(j, token)
 		app.Info(fmt.Sprintf("worker %d ended for repo %s", jobId, j))
-		resRet := []int{1, 2, 3}
-		res <- resRet
+		res <- weeklyCommits
 	}
 }
 
@@ -99,7 +98,6 @@ func getWeeklyCommits(user string, token string) [52]int {
 	// collect
 	for range repos {
 		weeklyCommits := <-res
-		app.Info(fmt.Sprintf("GOT: %v", weeklyCommits))
 		for i := 0; i < len(weeklyCommits) && i < 52; i++ {
 			totalWeeklyCommits[i] += weeklyCommits[i]
 		}
