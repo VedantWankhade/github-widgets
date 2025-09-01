@@ -58,7 +58,7 @@ func GetWeeklyCommitCount(repo string, token string) []int {
 }
 
 func GetGHUserRepos[T any](user, token string, target *[]T) {
-	perPage := 2
+	perPage := 100
 	page := 0
 
 	for {
