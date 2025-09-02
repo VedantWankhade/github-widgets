@@ -97,11 +97,11 @@ func CommitGraph(params url.Values) (io.ReadSeeker, error) {
 
   <!-- Styles -->
   <style>
-    .axis { stroke: #a6e9b6; stroke-width: 2; }
-.grid { stroke: #a6e9b6; stroke-opacity: 0.3; stroke-dasharray: 3 3; stroke-width: 1; }
-.tick { stroke: #a6e9b6; stroke-width: 1; }
-.label { font: 12px system-ui, sans-serif; fill: #a6e9b6; }
-.title { font: 14px system-ui, sans-serif; font-weight: 600; fill: #a6e9b6; }
+    .axis { stroke: #2ea44f; stroke-width: 2; }
+.grid { stroke: #2ea44f; stroke-opacity: 0.3; stroke-dasharray: 3 3; stroke-width: 1; }
+.tick { stroke: #2ea44f; stroke-width: 1; }
+.label { font: 12px system-ui, sans-serif; fill: #2ea44f; }
+.title { font: 14px system-ui, sans-serif; font-weight: 600; fill: #2ea44f; }
     .bar { fill: #a6e9b6; stroke: #2ea44f; stroke-width: 2; }
   </style>
 
