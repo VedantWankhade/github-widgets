@@ -9,4 +9,4 @@ Widgets in action:
 
 ### Weekly Commits graph
 
-![](https://ghwidgets.vedantwankha.de/?widget=commitgraph&user=vedantwankhade)
+![](https://ghwidgets.vedantwankha.de/?widget=commitgraph&user=vedantwankhade&v2=2)
