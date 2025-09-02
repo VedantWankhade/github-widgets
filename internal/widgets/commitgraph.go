@@ -33,31 +33,67 @@ func CommitGraph(params url.Values) (io.ReadSeeker, error) {
 
 	comms := getWeeklyCommits(username, ghToken)
 	// weeklyCommits := [52]int{5, 10, 15, 30, 20}
-	weeklyCommits := comms[52-20 : 52]
+	numWeeks := 20
+	weeklyCommits := comms[52-numWeeks : 52]
 	app.Info(fmt.Sprintf("weekly commits retrieved for %s", username))
 
-	height := 200
-	dx := 30
+	height := 400
+	maxBarHeight := height / 2
+	width := 860
+	graphStartX := 40
+	dx := 40
 
 	var ticks bytes.Buffer
-	for r := range 8 {
+	for r := range 10 {
 		ticks.WriteString(fmt.Sprintf(`
-  <line class="grid" x1="20" y1="%d" x2="1000" y2="%d"/>
-  <text class="label" x="20" y="%d" text-anchor="end">%d</text>
-			`, height-r*20, height-r*20, height-r*20, 5*r))
+  <line class="grid" x1="%d" y1="%d" x2="%d" y2="%d"/>
+  <text class="label" x="%d" y="%d" text-anchor="end">%d</text>
+			`, graphStartX+20, maxBarHeight-r*20, width, maxBarHeight-r*20, graphStartX+10, maxBarHeight-r*20, 5*r))
 	}
 
 	var bars bytes.Buffer
 	for w, c := range weeklyCommits {
 		bars.WriteString(fmt.Sprintf(`
   <rect class="bar" x="%d" y="%d" width="20" height="%d" rx="4" />
-			`, 20+dx*w, 200-c*4, c*4))
+			`, graphStartX+20+dx*w, 200-c*4, c*4))
+	}
+
+	var axes bytes.Buffer
+	axes.WriteString(fmt.Sprintf(`
+  <line class="axis" x1="%d" y1="0"  x2="%d"  y2="%d"/>   <!-- Y axis -->
+  <line class="axis" x1="%d" y1="200" x2="%d" y2="%d"/>  <!-- X axis -->
+		`, graphStartX+20, graphStartX+20, maxBarHeight, graphStartX+20, width, maxBarHeight))
+
+	endDate := time.Now()
+	dateRanges := make([]struct {
+		startDate time.Time
+		endDate   time.Time
+	}, numWeeks)
+
+	var xLabels bytes.Buffer
+	for w := numWeeks - 1; w >= 0; w-- {
+		weekEnd := endDate.AddDate(0, 0, -7*(numWeeks-1-w))
+		weekStart := weekEnd.AddDate(0, 0, -6)
+
+		dateRanges[w] = struct {
+			startDate time.Time
+			endDate   time.Time
+		}{
+			weekStart,
+			weekEnd,
+		}
+	}
+
+	for w, r := range dateRanges {
+		xLabels.WriteString(fmt.Sprintf(`
+		  <text class="label" transform="translate(%d 260) rotate(-90)" text-anchor="middle">%s</text>
+			`, graphStartX+40+dx*w, r.startDate.Format("02 Jan")+" - "+r.endDate.Format("02 Jan")))
 	}
 
 	res := bytes.NewReader([]byte(fmt.Sprintf(`
 
 
-	<svg width="1000" height="400" viewBox="0 0 500 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+	<svg width="%d" height="%d" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
   <title id="title">SVG Bar Chart with Axis Titles</title>
   <desc id="desc">A simple bar chart showing five bars with labeled X and Y axes.</desc>
 
@@ -72,28 +108,21 @@ func CommitGraph(params url.Values) (io.ReadSeeker, error) {
   </style>
 
   <!-- Axes -->
-  <line class="axis" x1="20" y1="0"  x2="20"  y2="200"/>   <!-- Y axis -->
-  <line class="axis" x1="20" y1="200" x2="220" y2="200"/>  <!-- X axis -->
-
+%s
   <!-- Y ticks & grid (0..30 step 10) -->
 	%s  
   
   <!-- Bars (example data: [12, 25, 9, 18, 30]) -->
 		%s
   <!-- X labels -->
-  <!-- <text class="label" x="100" y="278" text-anchor="middle">A</text>
-  <text class="label" x="180" y="278" text-anchor="middle">B</text>
-  <text class="label" x="260" y="278" text-anchor="middle">C</text>
-  <text class="label" x="340" y="278" text-anchor="middle">D</text>
-  <text class="label" x="420" y="278" text-anchor="middle">E</text>
- -->
+%s
   <!-- Axis titles -->
-  <!-- <text class="title" x="260" y="310" text-anchor="middle">Categories</text>
-  <text class="title" transform="translate(15 140) rotate(-90)" text-anchor="middle">Value</text> -->
+  <text class="title" x="420" y="320" text-anchor="middle">Categories</text>
+  <text class="title" transform="translate(20 140) rotate(-90)" text-anchor="middle">Value</text>
 </svg>
 	
 
-		`, ticks.String(), bars.String())))
+		`, width, height, axes.String(), ticks.String(), bars.String(), xLabels.String())))
 	app.Info(fmt.Sprintf("[Generating svg took %dms]", time.Since(start).Milliseconds()))
 	return res, nil
 }
