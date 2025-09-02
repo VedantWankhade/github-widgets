@@ -92,19 +92,17 @@ func CommitGraph(params url.Values) (io.ReadSeeker, error) {
 
 	res := bytes.NewReader([]byte(fmt.Sprintf(`
 
-
-	<svg width="%d" height="%d" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
-  <title id="title">SVG Bar Chart with Axis Titles</title>
-  <desc id="desc">A simple bar chart showing five bars with labeled X and Y axes.</desc>
+<svg width="%d" height="%d" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Commitgraph</title>
 
   <!-- Styles -->
   <style>
-    .axis { stroke: #222; stroke-width: 2; }
-    .grid { stroke: #bbb; stroke-dasharray: 3 3; stroke-width: 1; }
-    .tick { stroke: #222; stroke-width: 1; }
-    .label { font: 12px system-ui, sans-serif; fill: #222; }
-    .title { font: 14px system-ui, sans-serif; font-weight: 600; fill: #111; }
-    .bar { fill: #4E79A7; }
+    .axis { stroke: currentColor; stroke-width: 2; }
+.grid { stroke: currentColor; stroke-opacity: 0.3; stroke-dasharray: 3 3; stroke-width: 1; }
+.tick { stroke: currentColor; stroke-width: 1; }
+.label { font: 12px system-ui, sans-serif; fill: currentColor; }
+.title { font: 14px system-ui, sans-serif; font-weight: 600; fill: currentColor; }
+    .bar { fill: #a6e9b6; stroke: #2ea44f; stroke-width: 2; }
   </style>
 
   <!-- Axes -->
@@ -117,11 +115,9 @@ func CommitGraph(params url.Values) (io.ReadSeeker, error) {
   <!-- X labels -->
 %s
   <!-- Axis titles -->
-  <text class="title" x="420" y="320" text-anchor="middle">Categories</text>
-  <text class="title" transform="translate(20 140) rotate(-90)" text-anchor="middle">Value</text>
+  <text class="title" x="420" y="320" text-anchor="middle">Weeks</text>
+  <text class="title" transform="translate(20 140) rotate(-90)" text-anchor="middle">Commits</text>
 </svg>
-	
-
 		`, width, height, axes.String(), ticks.String(), bars.String(), xLabels.String())))
 	app.Info(fmt.Sprintf("[Generating svg took %dms]", time.Since(start).Milliseconds()))
 	return res, nil
