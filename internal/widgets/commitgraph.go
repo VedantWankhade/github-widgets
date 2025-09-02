@@ -92,7 +92,7 @@ func CommitGraph(params url.Values) (io.ReadSeeker, error) {
 
 	res := bytes.NewReader([]byte(fmt.Sprintf(`
 
-<svg width="%d" height="%d" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+<svg fill="currentColor" width="%d" height="%d" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
   <title id="title">Commitgraph</title>
 
   <!-- Styles -->
