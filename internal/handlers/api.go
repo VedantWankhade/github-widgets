@@ -39,6 +39,7 @@ func GenericHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Content-Type", "image/svg+xml")
+	w.Header().Set("Cache-Control", "no-cache")
 	app.Info(fmt.Sprintf("[Total time to serve request: %dms]", time.Since(start).Milliseconds()))
 	http.ServeContent(w, r, "widget.svg", time.Now(), f)
 }
